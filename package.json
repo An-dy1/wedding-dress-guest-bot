@@ -3,18 +3,21 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "scripts": {},
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@sparticuz/chromium": "^116.0.0",
     "@types/dotenv": "^8.2.0",
     "@types/puppeteer": "^7.0.4",
+    "@types/puppeteer-core": "^7.0.4",
     "@types/twilio": "^3.19.3",
     "dotenv": "^16.3.1",
+    "node-cron": "^3.0.2",
     "puppeteer": "^21.1.0",
-    "twilio": "^4.15.0"
+    "puppeteer-core": "^21.1.0",
+    "twilio": "^4.15.0",
+    "typescript": "^5.1.6"
   }
 }

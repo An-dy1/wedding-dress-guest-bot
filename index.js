@@ -36,54 +36,79 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.handler = void 0;
 var puppeteer = require("puppeteer");
-var twilio = require("twilio");
 var dotenv = require("dotenv");
+var twilio = require("twilio");
+var cron = require("node-cron");
 dotenv.config();
-var handler = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var twilioAccountSid, twilioAuthToken, twilioPhoneNumber, recipientPhoneNumber, url, browser, page, element, isAvailable, client;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                twilioAccountSid = process.env.TWILIO_ACCOUNT_SID;
-                twilioAuthToken = process.env.TWILIO_AUTH_TOKEN;
-                twilioPhoneNumber = process.env.TWILIO_PHONE_NUMBER;
-                recipientPhoneNumber = process.env.RECIPIENT_PHONE_NUMBER;
-                url = 'https://www.nuuly.com/rent/products/november-strapless-gown?color=001';
-                return [4 /*yield*/, puppeteer.launch()];
-            case 1:
-                browser = _a.sent();
-                return [4 /*yield*/, browser.newPage()];
-            case 2:
-                page = _a.sent();
-                return [4 /*yield*/, page.goto(url)];
-            case 3:
-                _a.sent();
-                return [4 /*yield*/, page.$('[aria-label="M"]:not([disabled])')];
-            case 4:
-                element = _a.sent();
-                isAvailable = element !== null;
-                return [4 /*yield*/, browser.close()];
-            case 5:
-                _a.sent();
-                if (!isAvailable) return [3 /*break*/, 7];
-                console.log('Item is available');
-                client = twilio(twilioAccountSid, twilioAuthToken);
-                return [4 /*yield*/, client.messages.create({
-                        to: recipientPhoneNumber,
-                        from: twilioPhoneNumber,
-                        body: 'Your item is available!',
-                    })];
-            case 6:
-                _a.sent();
-                return [3 /*break*/, 8];
-            case 7:
-                console.log('Item is not available');
-                _a.label = 8;
-            case 8: return [2 /*return*/];
-        }
+cron.schedule('0 */2 * * *', function run() {
+    return __awaiter(this, void 0, void 0, function () {
+        var twilioAccountSid, twilioAuthToken, twilioPhoneNumber, recipientPhoneNumber, dresses, browser, _i, dresses_1, dress, page, element, isAvailable, currentDate, currentDayOfMonth, currentMonth, currentYear, dateString, client;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    twilioAccountSid = process.env.TWILIO_ACCOUNT_SID;
+                    twilioAuthToken = process.env.TWILIO_AUTH_TOKEN;
+                    twilioPhoneNumber = process.env.TWILIO_PHONE_NUMBER;
+                    recipientPhoneNumber = process.env.RECIPIENT_PHONE_NUMBER;
+                    dresses = [
+                        {
+                            url: 'https://www.nuuly.com/rent/products/november-strapless-gown?color=001',
+                            name: 'November Strapless Gown',
+                            size: 'M',
+                        },
+                        {
+                            url: 'https://www.nuuly.com/rent/products/pleated-tulle-sweetheart-dress?color=266',
+                            name: 'Pleated Tulle Sweetheart Dress',
+                            size: '6',
+                        },
+                    ];
+                    return [4 /*yield*/, puppeteer.launch({
+                            headless: true,
+                        })];
+                case 1:
+                    browser = _a.sent();
+                    _i = 0, dresses_1 = dresses;
+                    _a.label = 2;
+                case 2:
+                    if (!(_i < dresses_1.length)) return [3 /*break*/, 9];
+                    dress = dresses_1[_i];
+                    return [4 /*yield*/, browser.newPage()];
+                case 3:
+                    page = _a.sent();
+                    return [4 /*yield*/, page.goto(dress.url)];
+                case 4:
+                    _a.sent();
+                    return [4 /*yield*/, page.$('[aria-label="M"]:not([disabled])')];
+                case 5:
+                    element = _a.sent();
+                    isAvailable = element !== null;
+                    currentDate = new Date();
+                    currentDayOfMonth = currentDate.getDate();
+                    currentMonth = currentDate.getMonth();
+                    currentYear = currentDate.getFullYear();
+                    dateString = currentDayOfMonth + '-' + (currentMonth + 1) + '-' + currentYear;
+                    if (!isAvailable) return [3 /*break*/, 7];
+                    client = twilio(twilioAccountSid, twilioAuthToken);
+                    return [4 /*yield*/, client.messages.create({
+                            to: recipientPhoneNumber,
+                            from: twilioPhoneNumber,
+                            body: "The item ".concat(dress.name, " is available on ").concat(dateString, "! ").concat(dress.url, "}"),
+                        })];
+                case 6:
+                    _a.sent();
+                    return [3 /*break*/, 8];
+                case 7:
+                    console.log("The item ".concat(dress.name, " is not available on ").concat(dateString, "!"));
+                    _a.label = 8;
+                case 8:
+                    _i++;
+                    return [3 /*break*/, 2];
+                case 9: return [4 /*yield*/, browser.close()];
+                case 10:
+                    _a.sent();
+                    return [2 /*return*/];
+            }
+        });
     });
-}); };
-exports.handler = handler;
-(0, exports.handler)();
+});
