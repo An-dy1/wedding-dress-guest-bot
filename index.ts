@@ -1,4 +1,4 @@
-import * as puppeteer from 'puppeteer';
+import * as puppeteer from 'puppeteer-core';
 import * as dotenv from 'dotenv';
 import * as twilio from 'twilio';
 
@@ -25,6 +25,7 @@ async function run() {
 
   const browser = await puppeteer.launch({
     headless: true,
+    executablePath: '/usr/bin/chromium-browser',
   });
 
   for (const dress of dresses) {
