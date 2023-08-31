@@ -17,6 +17,7 @@
     "puppeteer": "^21.1.0",
     "puppeteer-core": "^21.1.0",
     "twilio": "^4.15.0",
-    "typescript": "^5.1.6"
+    "typescript": "^5.1.6",
+    "winston": "^3.10.0"
   }
 }

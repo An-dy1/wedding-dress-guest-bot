@@ -36,10 +36,21 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var puppeteer = require("puppeteer");
+var puppeteer = require("puppeteer-core");
 var dotenv = require("dotenv");
 var twilio = require("twilio");
 dotenv.config();
+var winston = require('winston');
+var logger = winston.createLogger({
+    format: winston.format.combine(winston.format.timestamp(), winston.format.printf(function (_a) {
+        var timestamp = _a.timestamp, level = _a.level, message = _a.message;
+        return "".concat(timestamp, " [").concat(level, "]: ").concat(message);
+    })),
+    transports: [
+        new winston.transports.Console(),
+        new winston.transports.File({ filename: 'app.log' }),
+    ],
+});
 function run() {
     return __awaiter(this, void 0, void 0, function () {
         var twilioAccountSid, twilioAuthToken, twilioPhoneNumber, recipientPhoneNumber, dresses, browser, _i, dresses_1, dress, page, element, isAvailable, currentDate, currentDayOfMonth, currentMonth, currentYear, dateString, client;
@@ -64,6 +75,7 @@ function run() {
                     ];
                     return [4 /*yield*/, puppeteer.launch({
                             headless: true,
+                            executablePath: '/usr/bin/chromium-browser',
                         })];
                 case 1:
                     browser = _a.sent();
@@ -86,19 +98,23 @@ function run() {
                     currentDayOfMonth = currentDate.getDate();
                     currentMonth = currentDate.getMonth();
                     currentYear = currentDate.getFullYear();
-                    dateString = currentDayOfMonth + '-' + (currentMonth + 1) + '-' + currentYear;
+                    dateString = currentMonth + 1 + '-' + currentDayOfMonth + '-' + currentYear;
                     if (!isAvailable) return [3 /*break*/, 7];
+                    logger.info("The item '".concat(dress.name, "' in size ").concat(dress.size, " is available on ").concat(dateString, "! ").concat(dress.url, "}. A message was sent to ").concat(process.env.RECIPIENT_PHONE_NUMBER));
                     client = twilio(twilioAccountSid, twilioAuthToken);
                     return [4 /*yield*/, client.messages.create({
                             to: recipientPhoneNumber,
                             from: twilioPhoneNumber,
-                            body: "The item ".concat(dress.name, " is available on ").concat(dateString, "! ").concat(dress.url, "}"),
+                            body: "The item '".concat(dress.name, "' in size ").concat(dress.size, " is available on ").concat(dateString, "! ").concat(dress.url, "}"),
                         })];
                 case 6:
                     _a.sent();
                     return [3 /*break*/, 8];
                 case 7:
-                    console.log("The item ".concat(dress.name, " is not available on ").concat(dateString, "!"));
+                    // for local
+                    console.log("The item '".concat(dress.name, "' in size ").concat(dress.size, " is not available on ").concat(dateString, "!"));
+                    // for ec2
+                    logger.info("The item '".concat(dress.name, "' in size ").concat(dress.size, " is not available on ").concat(dateString, "!"));
                     _a.label = 8;
                 case 8:
                     _i++;
