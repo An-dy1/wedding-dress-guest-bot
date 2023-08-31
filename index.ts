@@ -61,7 +61,7 @@ async function run() {
       currentMonth + 1 + '-' + currentDayOfMonth + '-' + currentYear;
 
     // If the element is not disabled, send a text message using Twilio
-    if (isAvailable) {
+    if (!isAvailable) {
       logger.info(
         `The item '${dress.name}' in size ${dress.size} is available on ${dateString}! ${dress.url}}. A message was sent to ${process.env.RECIPIENT_PHONE_NUMBER}`
       );

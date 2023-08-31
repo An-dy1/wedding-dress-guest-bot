@@ -99,7 +99,7 @@ function run() {
                     currentMonth = currentDate.getMonth();
                     currentYear = currentDate.getFullYear();
                     dateString = currentMonth + 1 + '-' + currentDayOfMonth + '-' + currentYear;
-                    if (!isAvailable) return [3 /*break*/, 7];
+                    if (!!isAvailable) return [3 /*break*/, 7];
                     logger.info("The item '".concat(dress.name, "' in size ").concat(dress.size, " is available on ").concat(dateString, "! ").concat(dress.url, "}. A message was sent to ").concat(process.env.RECIPIENT_PHONE_NUMBER));
                     client = twilio(twilioAccountSid, twilioAuthToken);
                     return [4 /*yield*/, client.messages.create({
