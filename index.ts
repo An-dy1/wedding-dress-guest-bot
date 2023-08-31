@@ -1,11 +1,10 @@
 import * as puppeteer from 'puppeteer';
 import * as dotenv from 'dotenv';
 import * as twilio from 'twilio';
-import * as cron from 'node-cron';
 
 dotenv.config();
 
-cron.schedule('0 */2 * * *', async function run() {
+async function run() {
   const twilioAccountSid = process.env.TWILIO_ACCOUNT_SID;
   const twilioAuthToken = process.env.TWILIO_AUTH_TOKEN;
   const twilioPhoneNumber = process.env.TWILIO_PHONE_NUMBER;
@@ -42,7 +41,7 @@ cron.schedule('0 */2 * * *', async function run() {
     const currentYear = currentDate.getFullYear();
 
     const dateString =
-      currentDayOfMonth + '-' + (currentMonth + 1) + '-' + currentYear;
+      currentMonth + 1 + '-' + currentDayOfMonth + '-' + currentYear;
 
     // If the element is not disabled, send a text message using Twilio
     if (isAvailable) {
@@ -50,12 +49,16 @@ cron.schedule('0 */2 * * *', async function run() {
       await client.messages.create({
         to: recipientPhoneNumber!,
         from: twilioPhoneNumber!,
-        body: `The item ${dress.name} is available on ${dateString}! ${dress.url}}`,
+        body: `The item '${dress.name}' in size ${dress.size} is available on ${dateString}! ${dress.url}}`,
       });
     } else {
-      console.log(`The item ${dress.name} is not available on ${dateString}!`);
+      console.log(
+        `The item '${dress.name}' in size ${dress.size} is not available on ${dateString}!`
+      );
     }
   }
 
   await browser.close();
-});
+}
+
+run();

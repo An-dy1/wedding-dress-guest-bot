@@ -39,9 +39,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var puppeteer = require("puppeteer");
 var dotenv = require("dotenv");
 var twilio = require("twilio");
-var cron = require("node-cron");
 dotenv.config();
-cron.schedule('0 */2 * * *', function run() {
+function run() {
     return __awaiter(this, void 0, void 0, function () {
         var twilioAccountSid, twilioAuthToken, twilioPhoneNumber, recipientPhoneNumber, dresses, browser, _i, dresses_1, dress, page, element, isAvailable, currentDate, currentDayOfMonth, currentMonth, currentYear, dateString, client;
         return __generator(this, function (_a) {
@@ -111,4 +110,5 @@ cron.schedule('0 */2 * * *', function run() {
             }
         });
     });
-});
+}
+run();
